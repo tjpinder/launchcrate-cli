@@ -1,0 +1,7 @@
+site/
+.github/
+GTM.md
+src/
+tsconfig.json
+action.yml
+*.tsbuildinfo
