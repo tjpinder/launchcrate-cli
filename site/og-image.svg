@@ -1,0 +1,23 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" fill="#0a0a14"/>
+  <rect x="60" y="200" width="700" height="280" rx="12" fill="#1e1e2e" stroke="#313244" stroke-width="1"/>
+  <rect x="60" y="200" width="700" height="36" rx="12" fill="#181825"/>
+  <circle cx="82" cy="218" r="6" fill="#f38ba8"/>
+  <circle cx="100" cy="218" r="6" fill="#f9e2af"/>
+  <circle cx="118" cy="218" r="6" fill="#a6e3a1"/>
+  <text x="80" y="268" font-family="monospace" font-size="14" fill="#6c7086">$ npx launchcrate audit</text>
+  <text x="80" y="308" font-family="monospace" font-size="14" fill="#cdd6f4" font-weight="bold">Vibe Safety Score:</text>
+  <text x="310" y="308" font-family="monospace" font-size="14" fill="#89dceb" font-weight="bold">B (71/100)</text>
+  <text x="80" y="340" font-family="monospace" font-size="13" fill="#a6e3a1">Authentication       ████████████████████ 100%</text>
+  <text x="80" y="362" font-family="monospace" font-size="13" fill="#f38ba8">Injection Safety     ░░░░░░░░░░░░░░░░░░░░   0%</text>
+  <text x="80" y="384" font-family="monospace" font-size="13" fill="#a6e3a1">Secrets Management   █████████████████░░░  85%</text>
+  <text x="80" y="406" font-family="monospace" font-size="13" fill="#a6e3a1">Input Validation     ████████████████████ 100%</text>
+  <text x="80" y="428" font-family="monospace" font-size="13" fill="#a6e3a1">Error Handling       ████████████████████ 100%</text>
+  <text x="80" y="462" font-family="monospace" font-size="13" fill="#f38ba8" font-weight="bold">CRITICAL (8)</text>
+  <text x="820" y="280" font-family="sans-serif" font-size="42" fill="white" font-weight="bold">Launch Crate</text>
+  <text x="820" y="330" font-family="sans-serif" font-size="24" fill="#10b981">Vibe Code Safely</text>
+  <text x="820" y="380" font-family="sans-serif" font-size="16" fill="#6c7086">Free, open-source CLI</text>
+  <text x="820" y="404" font-family="sans-serif" font-size="16" fill="#6c7086">for Next.js security</text>
+  <rect x="820" y="440" width="160" height="36" rx="8" fill="#059669"/>
+  <text x="858" y="464" font-family="sans-serif" font-size="14" fill="white" font-weight="bold">npm i launchcrate</text>
+</svg>
