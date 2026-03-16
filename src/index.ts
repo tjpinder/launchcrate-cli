@@ -4,6 +4,8 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { initCommand } from './commands/init.js';
 import { scaffoldCommand } from './commands/scaffold.js';
+import { auditCommand } from './commands/audit.js';
+import { guardCommand } from './commands/guard.js';
 
 const program = new Command();
 
@@ -19,6 +21,32 @@ program
   .action(async (options) => {
     try {
       await initCommand(options);
+    } catch (error) {
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('audit')
+  .description('Scan for security issues and get a Vibe Safety Score')
+  .option('--json', 'Output results as JSON')
+  .action(async (options) => {
+    try {
+      await auditCommand(options);
+    } catch (error) {
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('guard')
+  .description('Generate CLAUDE.md and .cursorrules for AI safety')
+  .option('--format <format>', 'Output format: all, claude, cursor', 'all')
+  .action(async (options) => {
+    try {
+      await guardCommand(options);
     } catch (error) {
       console.error(chalk.red(error instanceof Error ? error.message : String(error)));
       process.exit(1);
