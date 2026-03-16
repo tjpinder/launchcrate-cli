@@ -181,6 +181,37 @@ Launch Crate works with any Next.js project. It auto-detects:
 | **Auth** | NextAuth/Auth.js, Clerk, Supabase Auth, Auth0 |
 | **Styling** | Tailwind CSS, CSS Modules, styled-components |
 
+## GitHub Action
+
+Add Launch Crate to your CI pipeline to audit every pull request:
+
+```yaml
+# .github/workflows/vibecheck.yml
+name: Vibe Safety Check
+on: [pull_request]
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: tjpinder/launchcrate-cli@v1
+```
+
+The action:
+- Posts a **PR comment** with your Vibe Safety Score and findings breakdown
+- **Fails the check** if critical issues are found (configurable)
+- Updates the comment on subsequent pushes (no spam)
+
+### Options
+
+```yaml
+- uses: tjpinder/launchcrate-cli@v1
+  with:
+    fail-on-critical: 'true'        # Block merge on critical findings (default: true)
+    comment-on-pr: 'true'           # Post results as PR comment (default: true)
+    working-directory: 'apps/web'   # For monorepos (default: repo root)
+```
+
 ## Safe Zones
 
 The core idea: **some files should never be generated or modified by AI.**

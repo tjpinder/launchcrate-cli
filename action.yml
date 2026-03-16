@@ -1,0 +1,188 @@
+name: 'Launch Crate Audit'
+description: 'Audit your Next.js project for AI-introduced security issues and get a Vibe Safety Score'
+author: 'Tom Pinder'
+
+branding:
+  icon: 'shield'
+  color: 'green'
+
+inputs:
+  fail-on-critical:
+    description: 'Fail the check if critical issues are found'
+    required: false
+    default: 'true'
+  comment-on-pr:
+    description: 'Post audit results as a PR comment'
+    required: false
+    default: 'true'
+  working-directory:
+    description: 'Directory to audit (defaults to repo root)'
+    required: false
+    default: '.'
+
+outputs:
+  score:
+    description: 'Vibe Safety Score (0-100)'
+  grade:
+    description: 'Letter grade (A, B+, B, C+, C, D+, D, F)'
+  critical-count:
+    description: 'Number of critical findings'
+  warning-count:
+    description: 'Number of warning findings'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Launch Crate
+      shell: bash
+      run: npm install -g launchcrate
+
+    - name: Run Audit
+      id: audit
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        set +e
+        npx launchcrate audit --json > /tmp/launchcrate-audit.json 2>&1
+        AUDIT_EXIT=$?
+        set -e
+
+        # Parse results
+        SCORE=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.score)}catch{console.log('0')}})")
+        GRADE=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.grade)}catch{console.log('F')}})")
+        CRITICALS=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.findings.filter(f=>f.severity==='critical').length)}catch{console.log('0')}})")
+        WARNINGS=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.findings.filter(f=>f.severity==='warning').length)}catch{console.log('0')}})")
+        FILES=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.filesScanned)}catch{console.log('0')}})")
+
+        echo "score=$SCORE" >> $GITHUB_OUTPUT
+        echo "grade=$GRADE" >> $GITHUB_OUTPUT
+        echo "critical-count=$CRITICALS" >> $GITHUB_OUTPUT
+        echo "warning-count=$WARNINGS" >> $GITHUB_OUTPUT
+        echo "files-scanned=$FILES" >> $GITHUB_OUTPUT
+        echo "exit-code=$AUDIT_EXIT" >> $GITHUB_OUTPUT
+
+        # Generate breakdown
+        AUTH=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.breakdown.auth)}catch{console.log('0')}})")
+        INJECTION=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.breakdown.injection)}catch{console.log('0')}})")
+        SECRETS=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.breakdown.secrets)}catch{console.log('0')}})")
+        VALIDATION=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.breakdown.validation)}catch{console.log('0')}})")
+        ERRORS=$(cat /tmp/launchcrate-audit.json | node -e "process.stdin.on('data',d=>{try{const r=JSON.parse(d);console.log(r.breakdown.errorHandling)}catch{console.log('0')}})")
+
+        echo "auth=$AUTH" >> $GITHUB_OUTPUT
+        echo "injection=$INJECTION" >> $GITHUB_OUTPUT
+        echo "secrets=$SECRETS" >> $GITHUB_OUTPUT
+        echo "validation=$VALIDATION" >> $GITHUB_OUTPUT
+        echo "errors=$ERRORS" >> $GITHUB_OUTPUT
+
+        # Generate findings markdown
+        node -e "
+          const fs = require('fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/launchcrate-audit.json', 'utf8'));
+          const criticals = data.findings.filter(f => f.severity === 'critical');
+          const warnings = data.findings.filter(f => f.severity === 'warning');
+          let md = '';
+          if (criticals.length > 0) {
+            md += '### Critical (' + criticals.length + ')\n\n';
+            criticals.slice(0, 15).forEach(f => {
+              md += '- \`' + f.file + ':' + f.line + '\` — ' + f.message + '\n';
+            });
+            if (criticals.length > 15) md += '- ... and ' + (criticals.length - 15) + ' more\n';
+            md += '\n';
+          }
+          if (warnings.length > 0) {
+            md += '### Warning (' + warnings.length + ')\n\n';
+            warnings.slice(0, 10).forEach(f => {
+              md += '- \`' + f.file + ':' + f.line + '\` — ' + f.message + '\n';
+            });
+            if (warnings.length > 10) md += '- ... and ' + (warnings.length - 10) + ' more\n';
+            md += '\n';
+          }
+          if (criticals.length === 0 && warnings.length === 0) {
+            md += '### No issues found\n\nYour codebase is clean.\n';
+          }
+          fs.writeFileSync('/tmp/launchcrate-findings.md', md);
+        "
+
+    - name: Comment on PR
+      if: inputs.comment-on-pr == 'true' && github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const score = '${{ steps.audit.outputs.score }}';
+          const grade = '${{ steps.audit.outputs.grade }}';
+          const criticals = '${{ steps.audit.outputs.critical-count }}';
+          const warnings = '${{ steps.audit.outputs.warning-count }}';
+          const files = '${{ steps.audit.outputs.files-scanned }}';
+          const auth = '${{ steps.audit.outputs.auth }}';
+          const injection = '${{ steps.audit.outputs.injection }}';
+          const secrets = '${{ steps.audit.outputs.secrets }}';
+          const validation = '${{ steps.audit.outputs.validation }}';
+          const errors = '${{ steps.audit.outputs.errors }}';
+
+          const findings = fs.readFileSync('/tmp/launchcrate-findings.md', 'utf8');
+
+          const gradeEmoji = score >= 90 ? '🟢' : score >= 70 ? '🔵' : score >= 50 ? '🟡' : '🔴';
+
+          const bar = (pct) => {
+            const full = Math.floor(pct / 5);
+            return '█'.repeat(full) + '░'.repeat(20 - full) + ' ' + pct + '%';
+          };
+
+          const body = `## ${gradeEmoji} Vibe Safety Score: ${grade} (${score}/100)
+
+          Scanned ${files} files
+
+          | Category | Score |
+          |----------|-------|
+          | Authentication (30%) | ${bar(auth)} |
+          | Injection Safety (25%) | ${bar(injection)} |
+          | Secrets Management (25%) | ${bar(secrets)} |
+          | Input Validation (10%) | ${bar(validation)} |
+          | Error Handling (10%) | ${bar(errors)} |
+
+          ${findings}
+
+          ---
+          <sub>Audited by <a href="https://github.com/tjpinder/launchcrate-cli">Launch Crate CLI</a> · <a href="https://vibeproof.tech">Test with VibeProof</a></sub>`;
+
+          // Find existing comment to update instead of creating duplicates
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+
+          const existing = comments.find(c => c.body.includes('Vibe Safety Score'));
+
+          if (existing) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: existing.id,
+              body: body,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body,
+            });
+          }
+
+    - name: Check Results
+      if: inputs.fail-on-critical == 'true'
+      shell: bash
+      run: |
+        CRITICALS="${{ steps.audit.outputs.critical-count }}"
+        if [ "$CRITICALS" -gt "0" ]; then
+          echo "::error::Launch Crate Audit found $CRITICALS critical security issues. Score: ${{ steps.audit.outputs.grade }} (${{ steps.audit.outputs.score }}/100)"
+          exit 1
+        fi
+        echo "Launch Crate Audit passed. Score: ${{ steps.audit.outputs.grade }} (${{ steps.audit.outputs.score }}/100)"
