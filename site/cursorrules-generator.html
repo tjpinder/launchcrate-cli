@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free .cursorrules Generator for Next.js | Launch Crate</title>
+  <meta name="description" content="Generate a .cursorrules file for your Next.js project in seconds. Paste your package.json and get AI safety rules tailored to your stack — Prisma, Drizzle, NextAuth, Clerk, Tailwind, and more.">
+  <meta name="keywords" content="cursorrules generator, generate cursorrules, cursor rules template, cursor ai rules, nextjs cursorrules, cursorrules nextjs, cursor safety rules">
+  <link rel="canonical" href="https://launchcrate.vibeproof.tech/cursorrules-generator">
+  <meta property="og:title" content="Free .cursorrules Generator for Next.js">
+  <meta property="og:description" content="Paste your package.json, get a .cursorrules file tailored to your stack. Free, instant, no signup.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://launchcrate.vibeproof.tech/cursorrules-generator">
+  <meta property="og:image" content="https://launchcrate.vibeproof.tech/og-image.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Free .cursorrules Generator for Next.js">
+  <meta name="twitter:description" content="Paste your package.json, get a .cursorrules file. Free, instant, no signup.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": ".cursorrules Generator",
+    "applicationCategory": "DeveloperApplication",
+    "description": "Generate a .cursorrules file tailored to your Next.js project stack. Supports Prisma, Drizzle, NextAuth, Clerk, Tailwind, and more.",
+    "url": "https://launchcrate.vibeproof.tech/cursorrules-generator",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Tom Pinder" }
+  }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: { 800: '#1e1e2e', 900: '#11111b', 950: '#0a0a14' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0a14; }
+    textarea, .output-area {
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+    }
+    .output-area {
+      background: #1e1e2e;
+      border: 1px solid #313244;
+      border-radius: 8px;
+      color: #cdd6f4;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body class="text-gray-300 antialiased">
+
+  <!-- Nav -->
+  <nav class="px-6 py-4 border-b border-gray-800/50">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <a href="/" class="text-white font-bold">Launch Crate</a>
+      <div class="flex items-center gap-4 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a>
+        <a href="/claude-md-generator" class="text-gray-400 hover:text-white transition-colors">CLAUDE.md</a>
+        <a href="https://github.com/tjpinder/launchcrate-cli" target="_blank" class="text-gray-400 hover:text-white transition-colors">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="px-6 py-16">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+        Free .cursorrules Generator
+      </h1>
+      <p class="text-lg text-gray-400 mb-2">
+        Paste your <code class="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded text-sm">package.json</code> and get a <code class="text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded text-sm">.cursorrules</code> file tailored to your Next.js stack.
+      </p>
+      <p class="text-gray-500 mb-8">
+        No signup. No API key. Runs entirely in your browser.
+      </p>
+
+      <!-- Input -->
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">
+            1. Paste your package.json
+          </label>
+          <textarea
+            id="packageJson"
+            class="w-full h-80 bg-surface-800 border border-gray-700 rounded-lg p-4 text-gray-300 placeholder-gray-600 focus:border-emerald-500 focus:outline-none resize-none"
+            placeholder='{
+  "name": "my-app",
+  "dependencies": {
+    "next": "^14.0.0",
+    "prisma": "^5.0.0",
+    "next-auth": "^5.0.0",
+    "tailwindcss": "^3.0.0"
+  }
+}'></textarea>
+
+          <!-- Options -->
+          <div class="mt-4 space-y-3">
+            <label class="block text-sm font-medium text-gray-300 mb-2">2. Customize (optional)</label>
+            <div class="grid grid-cols-2 gap-3">
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input type="checkbox" id="optSrcDir" checked class="rounded border-gray-600 bg-surface-800 text-emerald-500 focus:ring-emerald-500">
+                Uses src/ directory
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input type="checkbox" id="optAppRouter" checked class="rounded border-gray-600 bg-surface-800 text-emerald-500 focus:ring-emerald-500">
+                App Router
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input type="checkbox" id="optTypescript" checked class="rounded border-gray-600 bg-surface-800 text-emerald-500 focus:ring-emerald-500">
+                TypeScript
+              </label>
+              <label class="flex items-center gap-2 text-sm text-gray-400">
+                <input type="checkbox" id="optMultiTenant" class="rounded border-gray-600 bg-surface-800 text-emerald-500 focus:ring-emerald-500">
+                Multi-tenant (workspaces)
+              </label>
+            </div>
+
+            <div>
+              <label class="block text-sm text-gray-400 mb-1">Output format:</label>
+              <div class="flex gap-4">
+                <label class="flex items-center gap-2 text-sm text-gray-400">
+                  <input type="radio" name="format" value="cursorrules" checked class="text-emerald-500 focus:ring-emerald-500"> .cursorrules
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-400">
+                  <input type="radio" name="format" value="claudemd" class="text-emerald-500 focus:ring-emerald-500"> CLAUDE.md
+                </label>
+                <label class="flex items-center gap-2 text-sm text-gray-400">
+                  <input type="radio" name="format" value="both" class="text-emerald-500 focus:ring-emerald-500"> Both
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <button
+            id="generateBtn"
+            onclick="generate()"
+            class="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-3 rounded-lg transition-colors">
+            Generate Rules
+          </button>
+        </div>
+
+        <!-- Output -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-sm font-medium text-gray-300" id="outputLabel">
+              3. Your .cursorrules file
+            </label>
+            <button
+              id="copyBtn"
+              onclick="copyOutput()"
+              class="text-xs text-emerald-400 hover:text-emerald-300 transition-colors hidden">
+              Copy to clipboard
+            </button>
+          </div>
+          <div id="output" class="output-area w-full h-[460px] p-4 overflow-y-auto text-gray-500">
+            Your generated rules will appear here...
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="px-6 py-16 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-2xl font-bold text-white mb-8">How it works</h2>
+      <div class="grid sm:grid-cols-3 gap-6">
+        <div>
+          <div class="text-emerald-400 font-bold text-2xl mb-2">1</div>
+          <h3 class="text-white font-medium mb-1">Detect your stack</h3>
+          <p class="text-gray-500 text-sm">We read your package.json to identify your database, auth provider, styling framework, and other dependencies.</p>
+        </div>
+        <div>
+          <div class="text-emerald-400 font-bold text-2xl mb-2">2</div>
+          <h3 class="text-white font-medium mb-1">Generate rules</h3>
+          <p class="text-gray-500 text-sm">Rules are generated based on your specific stack. Prisma projects get Prisma rules. NextAuth projects get auth rules. No generic filler.</p>
+        </div>
+        <div>
+          <div class="text-emerald-400 font-bold text-2xl mb-2">3</div>
+          <h3 class="text-white font-medium mb-1">Commit to your repo</h3>
+          <p class="text-gray-500 text-sm">Copy the output, save as <code class="text-emerald-400">.cursorrules</code> or <code class="text-emerald-400">CLAUDE.md</code>, and commit. Every AI session now respects your architecture.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Want more? -->
+  <section class="px-6 py-16 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-2xl font-bold text-white mb-4">Want deeper analysis?</h2>
+      <p class="text-gray-400 mb-6">The web generator covers the basics. The CLI reads your actual code and generates rules tailored to your specific patterns.</p>
+      <div class="bg-surface-800 border border-gray-700 rounded-lg px-6 py-3 font-mono text-sm inline-flex items-center gap-3 mb-6">
+        <span class="text-gray-500">$</span>
+        <span class="text-white">npx launchcrate guard</span>
+      </div>
+      <p class="text-gray-500 text-sm">
+        Also try <code class="text-emerald-400">npx launchcrate audit</code> to get a Vibe Safety Score for your project.
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-6 py-12 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-gray-600 text-sm">
+        <a href="/" class="text-gray-400 hover:text-white transition-colors">Launch Crate CLI</a> is open source (MIT).
+      </p>
+      <p class="text-gray-600 text-sm">
+        Built with Launch Crate? Test it with
+        <a href="https://vibeproof.tech" class="text-emerald-500 hover:text-emerald-400 transition-colors font-medium">VibeProof</a>
+        — AI-powered QA.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Stack detection from package.json
+    function detectStack(pkg) {
+      const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+      const has = (name) => !!deps[name];
+
+      return {
+        database: has('prisma') || has('@prisma/client') ? 'prisma' :
+                  has('drizzle-orm') ? 'drizzle' :
+                  has('mongoose') ? 'mongoose' :
+                  has('@supabase/supabase-js') ? 'supabase' :
+                  has('mssql') || has('pg') || has('mysql2') ? 'raw-sql' : 'none',
+        auth: has('next-auth') || has('@auth/core') ? 'next-auth' :
+              has('@clerk/nextjs') ? 'clerk' :
+              has('@auth0/nextjs-auth0') ? 'auth0' :
+              has('@supabase/auth-helpers-nextjs') || has('@supabase/ssr') ? 'supabase-auth' : 'none',
+        styling: has('tailwindcss') ? 'tailwind' :
+                 has('styled-components') ? 'styled-components' : 'css-modules',
+        hasZod: has('zod'),
+        hasReactHookForm: has('react-hook-form'),
+        hasReactQuery: has('@tanstack/react-query'),
+        hasSWR: has('swr'),
+        hasLucide: has('lucide-react'),
+        hasShadcn: has('@radix-ui/react-dialog') || has('@shadcn/ui'),
+        hasDomPurify: has('dompurify') || has('isomorphic-dompurify'),
+        hasSentry: has('@sentry/nextjs'),
+        hasStripe: has('stripe'),
+        nextVersion: (deps['next'] || '').replace(/[\^~>=<]/g, ''),
+      };
+    }
+
+    // Generate safe zones based on stack
+    function getSafeZones(stack) {
+      const zones = [];
+      if (stack.auth === 'next-auth') zones.push('**/auth/**', '**/api/auth/**', '**/lib/auth.*');
+      if (stack.auth === 'clerk') zones.push('**/middleware.*');
+      if (stack.auth === 'auth0') zones.push('**/api/auth/**');
+      if (stack.database === 'prisma') zones.push('**/prisma/schema.prisma', '**/lib/prisma.*');
+      if (stack.database === 'drizzle') zones.push('**/drizzle.config.*', '**/db/schema.*');
+      if (stack.database === 'raw-sql') zones.push('**/lib/db.*', '**/lib/database.*');
+      zones.push('**/middleware.*', '**/layout.*', '**/next.config.*');
+      return [...new Set(zones)];
+    }
+
+    // Generate rules content
+    function generateRules(pkg, stack, options) {
+      const name = pkg.name || 'my-app';
+      const format = document.querySelector('input[name="format"]:checked').value;
+      const isClaudeMd = format === 'claudemd' || format === 'both';
+      const safeZones = getSafeZones(stack);
+
+      let rules = '';
+
+      if (isClaudeMd) {
+        rules += `# ${name} — AI Coding Rules\n\n`;
+        rules += `> Generated by [Launch Crate CLI](https://launchcrate.vibeproof.tech/cursorrules-generator)\n\n`;
+      } else {
+        rules += `# ${name} — Cursor Rules\n# Generated by Launch Crate CLI (https://launchcrate.vibeproof.tech/cursorrules-generator)\n\n`;
+      }
+
+      // Safe zones
+      rules += `## Safe Zones — DO NOT MODIFY\n\n`;
+      rules += `These files contain critical infrastructure. Never edit, overwrite, or regenerate them:\n\n`;
+      safeZones.forEach(z => { rules += `- \`${z}\`\n`; });
+      rules += `\n`;
+
+      // Stack
+      rules += `## Stack\n\n`;
+      rules += `- **Framework**: Next.js ${stack.nextVersion || '14+'}`;
+      rules += options.appRouter ? ' (App Router)\n' : ' (Pages Router)\n';
+      rules += `- **Language**: ${options.typescript ? 'TypeScript' : 'JavaScript'}\n`;
+      rules += `- **Database**: ${stack.database}\n`;
+      rules += `- **Auth**: ${stack.auth}\n`;
+      rules += `- **Styling**: ${stack.styling}\n`;
+      if (options.multiTenant) rules += `- **Architecture**: Multi-tenant (workspace isolation)\n`;
+      rules += `\n`;
+
+      // Auth rules
+      rules += `## Authentication\n\n`;
+      rules += `- Every API route MUST have authentication unless explicitly public\n`;
+      if (stack.auth === 'next-auth') {
+        rules += `- Use \`auth()\` from the existing auth config — do NOT use \`getServerSession\` (NextAuth v5)\n`;
+        rules += `- Never create alternative auth flows or bypass existing auth checks\n`;
+      } else if (stack.auth === 'clerk') {
+        rules += `- Use \`currentUser()\` or \`auth()\` from \`@clerk/nextjs/server\`\n`;
+        rules += `- The middleware handles route protection — do not duplicate auth checks in middleware\n`;
+      } else if (stack.auth === 'auth0') {
+        rules += `- Use \`getSession()\` from \`@auth0/nextjs-auth0\`\n`;
+        rules += `- Auth routes are managed by Auth0 — never modify \`/api/auth/*\`\n`;
+      } else if (stack.auth === 'supabase-auth') {
+        rules += `- Use \`createClient()\` and check \`getUser()\` for auth\n`;
+        rules += `- Row Level Security (RLS) policies are the primary access control — never bypass them\n`;
+      }
+      rules += `\n`;
+
+      // Database rules
+      rules += `## Database\n\n`;
+      if (stack.database === 'prisma') {
+        rules += `- Use the Prisma client from the existing import path (usually \`@/lib/prisma\`)\n`;
+        rules += `- Never modify \`prisma/schema.prisma\` without explicit instruction\n`;
+        rules += `- Use Prisma's query builder — never write raw SQL unless absolutely necessary\n`;
+        rules += `- Always use \`prisma.$transaction()\` for multi-step operations\n`;
+      } else if (stack.database === 'drizzle') {
+        rules += `- Use the Drizzle client from the existing import path\n`;
+        rules += `- Never modify the schema file without explicit instruction\n`;
+        rules += `- Use the query builder — never concatenate strings into SQL\n`;
+        rules += `- Use \`db.transaction()\` for multi-step operations\n`;
+      } else if (stack.database === 'raw-sql') {
+        rules += `- Use parameterized queries with proper type bindings — NEVER concatenate strings into SQL\n`;
+        rules += `- Use the existing database connection helper — do not create new connection pools\n`;
+        rules += `- Always use \`@paramName\` placeholders, never template literal interpolation for values\n`;
+      } else if (stack.database === 'supabase') {
+        rules += `- Use the Supabase client from the existing import path\n`;
+        rules += `- Always use \`.eq()\` filters — never bypass Row Level Security\n`;
+        rules += `- Use \`.single()\` when expecting one result\n`;
+      } else if (stack.database === 'mongoose') {
+        rules += `- Use existing Mongoose models — do not create duplicate model definitions\n`;
+        rules += `- Never pass unsanitized user input directly to \`.find()\` or \`.updateOne()\`\n`;
+        rules += `- Use \`.lean()\` for read-only queries (better performance)\n`;
+      }
+      if (options.multiTenant) {
+        rules += `- ALL queries MUST be scoped by workspaceId/tenantId — never return data across tenants\n`;
+      }
+      rules += `\n`;
+
+      // Security rules
+      rules += `## Security\n\n`;
+      rules += `- NEVER hardcode API keys, secrets, passwords, or tokens in source code\n`;
+      rules += `- Use \`process.env.VARIABLE_NAME\` for all credentials\n`;
+      rules += `- Validate all user input before processing\n`;
+      rules += `- Never expose error stack traces in API responses — return generic error messages\n`;
+      rules += `- Use parameterized queries — never concatenate user input into database queries\n`;
+      if (stack.hasStripe) {
+        rules += `- Stripe webhook endpoints MUST verify signatures with timing-safe comparison\n`;
+        rules += `- Never log or expose Stripe secret keys\n`;
+      }
+      if (stack.hasDomPurify) {
+        rules += `- Sanitize all user-generated HTML with DOMPurify before rendering\n`;
+      }
+      rules += `\n`;
+
+      // Code conventions
+      rules += `## Code Conventions\n\n`;
+      if (options.srcDir) {
+        rules += `- Use \`@/\` path alias for imports (e.g., \`@/lib/db\`, \`@/components/ui\`)\n`;
+      }
+      if (options.typescript) {
+        rules += `- Use TypeScript strict mode — no \`any\` types unless absolutely necessary\n`;
+      }
+      if (stack.hasZod) {
+        rules += `- Use Zod for input validation on all API routes\n`;
+      }
+      if (stack.hasReactHookForm) {
+        rules += `- Use react-hook-form for form state management\n`;
+      }
+      if (stack.hasReactQuery) {
+        rules += `- Use React Query for data fetching in client components\n`;
+      }
+      if (stack.hasSWR) {
+        rules += `- Use SWR for data fetching in client components\n`;
+      }
+      if (stack.hasLucide) {
+        rules += `- Use lucide-react for icons — do not add other icon libraries\n`;
+      }
+      if (stack.hasShadcn) {
+        rules += `- Use shadcn/ui components from \`@/components/ui\` — do not install competing component libraries\n`;
+      }
+      if (stack.hasSentry) {
+        rules += `- Errors are captured by Sentry — use \`Sentry.captureException()\` for manual error reporting\n`;
+      }
+      rules += `- Follow existing code conventions in the project\n`;
+      rules += `- Match the import style used in existing files\n`;
+      rules += `- Match the error handling pattern used in existing routes\n`;
+      rules += `\n`;
+
+      // File creation rules
+      rules += `## File Creation\n\n`;
+      rules += `- Only create new files — never modify existing files unless explicitly asked\n`;
+      rules += `- Place new features in the appropriate directory structure\n`;
+      rules += `- Follow the existing naming conventions (file names, component names, route structure)\n`;
+      if (options.appRouter) {
+        rules += `- API routes go in \`${options.srcDir ? 'src/' : ''}app/api/\` as \`route.ts\` files\n`;
+        rules += `- Pages go in \`${options.srcDir ? 'src/' : ''}app/\` as \`page.tsx\` files\n`;
+        rules += `- Use \`'use client'\` directive only when the component needs client-side interactivity\n`;
+      }
+      rules += `\n`;
+
+      // Common mistakes
+      rules += `## Common AI Mistakes to Avoid\n\n`;
+      rules += `- Do not create duplicate auth middleware or auth utility files\n`;
+      rules += `- Do not install packages that duplicate existing functionality\n`;
+      rules += `- Do not use \`dangerouslySetInnerHTML\` with user-controlled content\n`;
+      rules += `- Do not create new database connection files — use the existing one\n`;
+      rules += `- Do not add \`console.log\` statements in production API routes\n`;
+      if (stack.auth === 'next-auth') {
+        rules += `- Do not use \`getServerSession\` — use \`auth()\` (NextAuth v5 pattern)\n`;
+      }
+      if (stack.database === 'prisma') {
+        rules += `- Do not instantiate new PrismaClient — use the singleton from \`@/lib/prisma\`\n`;
+      }
+      rules += `\n`;
+
+      return rules;
+    }
+
+    function generate() {
+      const input = document.getElementById('packageJson').value.trim();
+      const output = document.getElementById('output');
+      const copyBtn = document.getElementById('copyBtn');
+      const label = document.getElementById('outputLabel');
+      const format = document.querySelector('input[name="format"]:checked').value;
+
+      if (!input) {
+        output.textContent = 'Please paste your package.json first.';
+        output.className = 'output-area w-full h-[460px] p-4 overflow-y-auto text-red-400';
+        return;
+      }
+
+      let pkg;
+      try {
+        pkg = JSON.parse(input);
+      } catch (e) {
+        output.textContent = 'Invalid JSON. Please paste a valid package.json file.';
+        output.className = 'output-area w-full h-[460px] p-4 overflow-y-auto text-red-400';
+        return;
+      }
+
+      const deps = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+      if (!deps['next']) {
+        output.textContent = 'No "next" dependency found. This generator is designed for Next.js projects.';
+        output.className = 'output-area w-full h-[460px] p-4 overflow-y-auto text-yellow-400';
+        return;
+      }
+
+      const stack = detectStack(pkg);
+      const options = {
+        srcDir: document.getElementById('optSrcDir').checked,
+        appRouter: document.getElementById('optAppRouter').checked,
+        typescript: document.getElementById('optTypescript').checked,
+        multiTenant: document.getElementById('optMultiTenant').checked,
+      };
+
+      const rules = generateRules(pkg, stack, options);
+
+      output.textContent = rules;
+      output.className = 'output-area w-full h-[460px] p-4 overflow-y-auto text-gray-200';
+      copyBtn.classList.remove('hidden');
+
+      if (format === 'cursorrules') label.textContent = '3. Your .cursorrules file';
+      else if (format === 'claudemd') label.textContent = '3. Your CLAUDE.md file';
+      else label.textContent = '3. Your .cursorrules / CLAUDE.md file';
+    }
+
+    function copyOutput() {
+      const output = document.getElementById('output');
+      navigator.clipboard.writeText(output.textContent).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy to clipboard'; }, 2000);
+      });
+    }
+  </script>
+
+</body>
+</html>
