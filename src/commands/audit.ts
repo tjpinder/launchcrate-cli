@@ -74,21 +74,35 @@ const RULES: {
     severity: 'critical',
     category: 'injection',
     message: 'SQL query uses string concatenation (injection risk)',
-    test: (content) => {
+    test: (content, filePath) => {
+      // Skip test files
+      if (filePath.includes('__tests__') || filePath.includes('.test.') || filePath.includes('.spec.')) return [];
       const results: { line: number; snippet: string }[] = [];
       const lines = content.split('\n');
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        // Template literals in SQL
+
+        // Skip safe patterns: constant/column interpolation (ALL_CAPS, _COLUMNS, known safe patterns)
+        // e.g., `SELECT ${IDEA_DETAIL_COLUMNS}` or `FROM [${table}]` where table is server-controlled
+        if (/\$\{[A-Z_]{3,}\}/.test(line)) continue; // ALL_CAPS constants
+        if (/\$\{\w+COLUMNS?\}/.test(line)) continue; // Column list constants
+        if (/\[\$\{\w+\}\]/.test(line) && !/req|request|param|body|search|query|input/i.test(line)) continue; // [${table}] with server var
+
+        // Template literals in SQL — only flag if interpolating something that looks like user input
         if (/(?:query|execute|raw)\s*\(\s*`[^`]*\$\{/.test(line)) {
-          results.push({ line: i + 1, snippet: line.trim().substring(0, 80) });
+          // Check if the interpolated variable looks like user input
+          const hasUserInput = /\$\{.*(?:req|request|param|body|search|query|input|args|data\[)/i.test(line);
+          const hasDynamicClauses = /\$\{.*(?:setClauses|values|whereClauses|conditions|filters)\b/.test(line);
+          if (hasUserInput || hasDynamicClauses) {
+            results.push({ line: i + 1, snippet: line.trim().substring(0, 80) });
+          }
         }
         // String concat in SQL
         if (/(?:query|execute|raw)\s*\(\s*['"][^'"]*['"]\s*\+/.test(line)) {
           results.push({ line: i + 1, snippet: line.trim().substring(0, 80) });
         }
-        // WHERE with direct variable interpolation
-        if (/WHERE\s+\w+\s*=\s*['"]?\s*\$\{/.test(line)) {
+        // WHERE with direct user variable interpolation
+        if (/WHERE\s+\w+\s*=\s*['"]?\s*\$\{(?:.*(?:req|request|param|body|input))/.test(line)) {
           results.push({ line: i + 1, snippet: line.trim().substring(0, 80) });
         }
       }
@@ -121,6 +135,8 @@ const RULES: {
     message: 'Possible hardcoded secret or API key',
     test: (content, filePath) => {
       if (filePath.includes('.env') || filePath.includes('node_modules') || filePath.endsWith('.md')) return [];
+      // Skip test files — fake tokens in test fixtures are expected
+      if (filePath.includes('__tests__') || filePath.includes('.test.') || filePath.includes('.spec.')) return [];
       const results: { line: number; snippet: string }[] = [];
       const lines = content.split('\n');
       for (let i = 0; i < lines.length; i++) {
@@ -130,13 +146,15 @@ const RULES: {
 
         // API keys patterns
         if (/(?:api[_-]?key|secret[_-]?key|password|token)\s*[:=]\s*['"][a-zA-Z0-9_\-]{20,}['"]/i.test(line)) {
-          // Skip if it's referencing process.env or an example
-          if (/process\.env|example|placeholder|your[_-]|xxx|test/i.test(line)) continue;
+          // Skip if it's referencing process.env, an example, or clearly fake
+          if (/process\.env|example|placeholder|your[_-]|xxx|test|mock|fake|dummy|sample|encrypted-/i.test(line)) continue;
           results.push({ line: i + 1, snippet: line.trim().substring(0, 60) + '...' });
         }
 
-        // Specific key patterns
-        if (/(?:sk[-_](?:live|test)|pk[-_](?:live|test)|sk-ant-|ghp_|gho_|glpat-|xoxb-|xoxp-)\w{10,}/.test(line)) {
+        // Specific key patterns — only flag if they look like actual key values (not regex patterns or validation checks)
+        if (/(?:sk[-_]live|pk[-_]live|sk-ant-api|ghp_[a-zA-Z0-9]{30,}|gho_[a-zA-Z0-9]{30,}|glpat-[a-zA-Z0-9]{20,})\w+/.test(line)) {
+          // Skip regex patterns (used for redaction/validation), startsWith checks, and string matching
+          if (/\.replace|\.match|\.test|regex|RegExp|startsWith|\.search|\/.*sk[-_]live/i.test(line)) continue;
           results.push({ line: i + 1, snippet: line.trim().substring(0, 40) + '***' });
         }
       }
@@ -242,12 +260,15 @@ const RULES: {
     id: 'dangerously-set-html',
     severity: 'warning',
     category: 'injection',
-    message: 'dangerouslySetInnerHTML used — ensure input is sanitized',
+    message: 'dangerouslySetInnerHTML with user-controlled content',
     test: (content) => {
       const results: { line: number; snippet: string }[] = [];
       const lines = content.split('\n');
       for (let i = 0; i < lines.length; i++) {
         if (/dangerouslySetInnerHTML/.test(lines[i])) {
+          // Skip safe patterns: JSON.stringify (JSON-LD schema markup), DOMPurify
+          const context = lines.slice(Math.max(0, i - 1), Math.min(lines.length, i + 2)).join(' ');
+          if (/JSON\.stringify|DOMPurify|sanitize|purify|ld\+json|schema/i.test(context)) continue;
           results.push({ line: i + 1, snippet: lines[i].trim().substring(0, 80) });
         }
       }
