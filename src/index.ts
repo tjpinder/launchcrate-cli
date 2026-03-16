@@ -6,6 +6,7 @@ import { initCommand } from './commands/init.js';
 import { scaffoldCommand } from './commands/scaffold.js';
 import { auditCommand } from './commands/audit.js';
 import { guardCommand } from './commands/guard.js';
+import { testGapCommand } from './commands/test-gap.js';
 
 const program = new Command();
 
@@ -47,6 +48,20 @@ program
   .action(async (options) => {
     try {
       await guardCommand(options);
+    } catch (error) {
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('test-gap')
+  .description('Find untested API routes and pages, ranked by risk')
+  .option('--json', 'Output results as JSON')
+  .option('--risk-only', 'Show only critical and high-risk untested routes')
+  .action(async (options) => {
+    try {
+      await testGapCommand(options);
     } catch (error) {
       console.error(chalk.red(error instanceof Error ? error.message : String(error)));
       process.exit(1);
