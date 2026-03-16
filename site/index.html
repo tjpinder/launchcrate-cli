@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Launch Crate CLI — Vibe Code Safely</title>
+  <meta name="description" content="Find out if your AI-coded Next.js app is safe. Audit security issues, generate AI safety rules, and scaffold features that match your codebase.">
+  <meta property="og:title" content="Launch Crate CLI — Vibe Code Safely">
+  <meta property="og:description" content="Find out if your AI-coded Next.js app is safe. One command.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://launchcrate.vibeproof.tech">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Launch Crate CLI — Vibe Code Safely">
+  <meta name="twitter:description" content="Find out if your AI-coded Next.js app is safe. One command.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
+            surface: { 800: '#1e1e2e', 900: '#11111b', 950: '#0a0a14' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #0a0a14; }
+    .terminal {
+      background: #1e1e2e;
+      border: 1px solid #313244;
+      border-radius: 12px;
+      font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .terminal-header {
+      background: #181825;
+      border-bottom: 1px solid #313244;
+      border-radius: 12px 12px 0 0;
+      padding: 10px 16px;
+      display: flex;
+      gap: 8px;
+    }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .terminal-dot-red { background: #f38ba8; }
+    .terminal-dot-yellow { background: #f9e2af; }
+    .terminal-dot-green { background: #a6e3a1; }
+    .t-green { color: #a6e3a1; }
+    .t-red { color: #f38ba8; }
+    .t-yellow { color: #f9e2af; }
+    .t-cyan { color: #89dceb; }
+    .t-dim { color: #6c7086; }
+    .t-white { color: #cdd6f4; }
+    .t-bold { font-weight: 700; }
+    .bar-full { color: #a6e3a1; }
+    .bar-empty { color: #45475a; }
+    .bar-warn { color: #f38ba8; }
+    .stack-logo {
+      filter: grayscale(1) brightness(0.7);
+      transition: filter 0.2s;
+    }
+    .stack-logo:hover {
+      filter: grayscale(0) brightness(1);
+    }
+    .glow { box-shadow: 0 0 80px rgba(16, 185, 129, 0.08); }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    .cursor-blink { animation: blink 1s infinite; }
+  </style>
+</head>
+<body class="text-gray-300 antialiased">
+
+  <!-- Hero -->
+  <section class="min-h-screen flex flex-col justify-center px-6 py-20">
+    <div class="max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 text-emerald-400 text-sm mb-8">
+        <span>Open Source</span>
+        <span class="text-emerald-600">&#8226;</span>
+        <span>MIT License</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-white tracking-tight mb-6">
+        Is your AI-coded app <span class="text-emerald-400">safe?</span>
+      </h1>
+
+      <p class="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+        One command to audit your Next.js project for security issues AI introduced. Get a Vibe Safety Score, generate AI safety rules, and scaffold features that match your code.
+      </p>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+        <div class="bg-surface-800 border border-gray-700 rounded-lg px-6 py-3 font-mono text-sm flex items-center gap-3">
+          <span class="text-gray-500">$</span>
+          <span class="text-white">npx launchcrate audit</span>
+          <span class="cursor-blink text-emerald-400">|</span>
+        </div>
+        <a href="https://github.com/tjpinder/launchcrate-cli" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+
+      <!-- Terminal Demo -->
+      <div class="terminal glow max-w-2xl mx-auto text-left">
+        <div class="terminal-header">
+          <div class="terminal-dot terminal-dot-red"></div>
+          <div class="terminal-dot terminal-dot-yellow"></div>
+          <div class="terminal-dot terminal-dot-green"></div>
+        </div>
+        <div class="p-5 overflow-x-auto">
+<pre class="whitespace-pre"><span class="t-dim">$</span> <span class="t-white">npx launchcrate audit</span>
+
+  <span class="t-bold t-white">Launch Crate Audit</span>
+  <span class="t-dim">Scanned 3,051 files</span>
+
+  <span class="t-white">┌─────────────────────────────────────┐</span>
+  <span class="t-white">│</span>  Vibe Safety Score: <span class="t-cyan t-bold">B (71/100)</span>       <span class="t-white">│</span>
+  <span class="t-white">└─────────────────────────────────────┘</span>
+
+  <span class="t-bold t-white">Breakdown:</span>
+    <span class="t-white">Authentication      </span> <span class="bar-full">████████████████████</span> <span class="t-green">100%</span>
+    <span class="t-white">Injection Safety    </span> <span class="bar-warn">░░░░░░░░░░░░░░░░░░░░</span> <span class="t-red">  0%</span>
+    <span class="t-white">Secrets Management  </span> <span class="bar-full">█████████████████</span><span class="bar-empty">░░░</span> <span class="t-green"> 85%</span>
+    <span class="t-white">Input Validation    </span> <span class="bar-full">████████████████████</span> <span class="t-green">100%</span>
+    <span class="t-white">Error Handling      </span> <span class="bar-full">████████████████████</span> <span class="t-green">100%</span>
+
+  <span class="t-red t-bold">CRITICAL (8)</span>
+    <span class="t-red">✗</span> <span class="t-dim">src/lib/db/jira.ts:181</span> — SQL injection risk
+    <span class="t-red">✗</span> <span class="t-dim">src/app/api/admin/route.ts:145</span> — String concat in query
+    <span class="t-dim">  ... 6 more</span>
+
+  <span class="t-yellow t-bold">WARNING (5)</span>
+    <span class="t-yellow">⚠</span> <span class="t-dim">src/app/blog/page.tsx:163</span> — dangerouslySetInnerHTML
+    <span class="t-dim">  ... 4 more</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three Steps -->
+  <section class="px-6 py-20 border-t border-gray-800/50">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="text-3xl font-bold text-white text-center mb-4">Three commands. Full protection.</h2>
+      <p class="text-gray-400 text-center mb-16 max-w-2xl mx-auto">AI breaks things in predictable ways. Launch Crate finds the damage, prevents future breakage, and builds new features safely.</p>
+
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Audit -->
+        <div class="bg-surface-800 border border-gray-800 rounded-xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">Audit</h3>
+          <p class="text-gray-400 text-sm mb-4">Find what AI broke. Scans for unprotected routes, SQL injection, hardcoded secrets, missing validation, and error leaks.</p>
+          <code class="text-xs text-emerald-400 bg-emerald-500/5 px-2 py-1 rounded">npx launchcrate audit</code>
+        </div>
+
+        <!-- Guard -->
+        <div class="bg-surface-800 border border-gray-800 rounded-xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">Guard</h3>
+          <p class="text-gray-400 text-sm mb-4">Prevent future breakage. Auto-generates CLAUDE.md and .cursorrules tailored to your project's architecture.</p>
+          <code class="text-xs text-emerald-400 bg-emerald-500/5 px-2 py-1 rounded">npx launchcrate guard</code>
+        </div>
+
+        <!-- Scaffold -->
+        <div class="bg-surface-800 border border-gray-800 rounded-xl p-6">
+          <div class="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"/></svg>
+          </div>
+          <h3 class="text-lg font-semibold text-white mb-2">Scaffold</h3>
+          <p class="text-gray-400 text-sm mb-4">Build safely. AI generates complete features (API routes, pages, components) that match your existing code patterns.</p>
+          <code class="text-xs text-emerald-400 bg-emerald-500/5 px-2 py-1 rounded">npx launchcrate scaffold</code>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What it checks -->
+  <section class="px-6 py-20 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white text-center mb-4">What the audit catches</h2>
+      <p class="text-gray-400 text-center mb-12">The security issues AI coding tools create most often.</p>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">Unprotected API routes</p>
+            <p class="text-gray-500 text-sm">AI creates endpoints without auth checks. Launch Crate finds every one.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">SQL injection</p>
+            <p class="text-gray-500 text-sm">String concatenation in queries. AI does this constantly with template literals.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">Hardcoded secrets</p>
+            <p class="text-gray-500 text-sm">API keys, tokens, and passwords that AI dropped into your source code.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">Missing input validation</p>
+            <p class="text-gray-500 text-sm">Request bodies used raw without Zod, Yup, or any validation layer.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">Stack trace leaks</p>
+            <p class="text-gray-500 text-sm">Error details and stack traces exposed in API responses.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 rounded-lg bg-surface-800/50">
+          <span class="text-red-400 mt-0.5">&#10005;</span>
+          <div>
+            <p class="text-white font-medium">XSS via dangerouslySetInnerHTML</p>
+            <p class="text-gray-500 text-sm">User-controlled content rendered without sanitization.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Supported Stacks -->
+  <section class="px-6 py-20 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">Works with your stack</h2>
+      <p class="text-gray-400 mb-12">Launch Crate auto-detects your project configuration. No setup required for audit.</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-2xl mx-auto">
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20 group-hover:text-white">N</div>
+          <span class="text-sm text-gray-500">Next.js</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">Ts</div>
+          <span class="text-sm text-gray-500">TypeScript</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">P</div>
+          <span class="text-sm text-gray-500">Prisma</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">D</div>
+          <span class="text-sm text-gray-500">Drizzle</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">Na</div>
+          <span class="text-sm text-gray-500">NextAuth</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">C</div>
+          <span class="text-sm text-gray-500">Clerk</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">Tw</div>
+          <span class="text-sm text-gray-500">Tailwind</span>
+        </div>
+        <div class="flex flex-col items-center gap-2 p-4">
+          <div class="text-2xl font-bold text-white/20">Sb</div>
+          <span class="text-sm text-gray-500">Supabase</span>
+        </div>
+      </div>
+
+      <p class="text-gray-600 text-sm mt-8">Also supports: raw SQL (pg/mssql), Mongoose, Auth0, CSS Modules, styled-components</p>
+    </div>
+  </section>
+
+  <!-- CI Integration -->
+  <section class="px-6 py-20 border-t border-gray-800/50">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold text-white text-center mb-4">Add to your CI pipeline</h2>
+      <p class="text-gray-400 text-center mb-10">Block unsafe merges automatically. Exits with code 1 on critical findings.</p>
+
+      <div class="terminal max-w-xl mx-auto">
+        <div class="terminal-header">
+          <div class="terminal-dot terminal-dot-red"></div>
+          <div class="terminal-dot terminal-dot-yellow"></div>
+          <div class="terminal-dot terminal-dot-green"></div>
+          <span class="text-xs text-gray-500 ml-2">.github/workflows/audit.yml</span>
+        </div>
+        <div class="p-5">
+<pre class="text-sm"><span class="t-cyan">name:</span> <span class="t-white">Vibe Safety Check</span>
+<span class="t-cyan">on:</span> <span class="t-white">[pull_request]</span>
+<span class="t-cyan">jobs:</span>
+  <span class="t-cyan">audit:</span>
+    <span class="t-cyan">runs-on:</span> <span class="t-white">ubuntu-latest</span>
+    <span class="t-cyan">steps:</span>
+      - <span class="t-cyan">uses:</span> <span class="t-white">actions/checkout@v4</span>
+      - <span class="t-cyan">run:</span> <span class="t-green">npx launchcrate audit</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="px-6 py-24 border-t border-gray-800/50">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Find out in 30 seconds.</h2>
+
+      <div class="bg-surface-800 border border-gray-700 rounded-lg px-6 py-4 font-mono text-base inline-flex items-center gap-3 mb-8">
+        <span class="text-gray-500">$</span>
+        <span class="text-white">npx launchcrate audit</span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="https://github.com/tjpinder/launchcrate-cli" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-gray-700 text-white font-medium px-6 py-3 rounded-lg transition-colors">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          Star on GitHub
+        </a>
+        <a href="https://www.npmjs.com/package/launchcrate" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition-colors">
+          View on npm
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-6 py-12 border-t border-gray-800/50">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-gray-600 text-sm">
+        Launch Crate CLI is open source (MIT).
+        Built by <a href="https://github.com/tjpinder" class="text-gray-400 hover:text-white transition-colors">Tom Pinder</a>.
+      </p>
+      <p class="text-gray-600 text-sm">
+        Built with Launch Crate? Test it with
+        <a href="https://vibeproof.tech" class="text-emerald-500 hover:text-emerald-400 transition-colors font-medium">VibeProof</a>
+        — AI-powered QA.
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
