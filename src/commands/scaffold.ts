@@ -10,7 +10,7 @@ import { writeFileSafe } from '../utils/fs.js';
 
 export async function scaffoldCommand(
   featureName: string | undefined,
-  options: { description?: string; noAi?: boolean; dryRun?: boolean }
+  options: { description?: string; ai?: boolean; dryRun?: boolean }
 ): Promise<void> {
   const projectRoot = process.cwd();
 
@@ -57,9 +57,10 @@ export async function scaffoldCommand(
 
   // Check API key
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  const useAi = !options.noAi && !!apiKey;
+  const noAi = options.ai === false;
+  const useAi = !noAi && !!apiKey;
 
-  if (!useAi && !options.noAi) {
+  if (!useAi && !noAi) {
     console.log(chalk.yellow('\n  No ANTHROPIC_API_KEY found. Using basic templates.'));
     console.log(chalk.dim('  Set ANTHROPIC_API_KEY in .env for AI-powered generation.\n'));
   }

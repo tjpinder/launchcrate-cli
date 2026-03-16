@@ -2,53 +2,172 @@
 
 **AI-powered feature scaffolding for Next.js. Vibe code safely.**
 
-Launch Crate analyzes your existing Next.js project, learns your patterns, and generates new features that match your codebase exactly. It knows which files are safe to create and which ones to never touch.
+Launch Crate scans your Next.js project for security issues, generates AI safety rules, and scaffolds new features that match your existing code patterns. It knows which files are safe to create and which ones to never touch.
 
-## The Problem
-
-AI coding tools are incredible at generating features — and terrible at respecting your existing architecture. They'll rewrite your auth, break your database layer, and ignore your project conventions. You spend more time fixing AI output than you saved.
-
-## The Solution
+## Quick Start
 
 ```bash
-# 1. Launch Crate learns your project
+# Audit your project's vibe safety
+npx launchcrate audit
+
+#   Scanned 3,051 files
+#
+#   ┌─────────────────────────────────────┐
+#   │  Vibe Safety Score: B (71/100)      │
+#   └─────────────────────────────────────┘
+#
+#   Breakdown:
+#     Authentication       ████████████████████ 100%
+#     Injection Safety     ░░░░░░░░░░░░░░░░░░░░   0%
+#     Secrets Management   █████████████████░░░  85%
+#     Input Validation     ████████████████████ 100%
+#     Error Handling       ████████████████████ 100%
+#
+#   CRITICAL (8)
+#     ✗ src/lib/db/jira.ts:181 — SQL query uses string concatenation
+#     ✗ src/app/api/admin/route.ts:145 — SQL injection risk
+#     ...
+
+# Generate AI safety rules for Claude Code and Cursor
+npx launchcrate guard
+
+#   + CLAUDE.md (47 rules)
+#   + .cursorrules
+
+# Detect your project and set up safe zones
 npx launchcrate init
 
-# 2. It detects your stack, finds your patterns, and marks safe zones
-#    ✓ Next.js 14 (App Router) | TypeScript | Prisma | NextAuth | Tailwind
-#    ✗ Safe zones: auth/**, lib/db.*, middleware.*
-
-# 3. Scaffold features that match YOUR code, not generic templates
+# Scaffold a complete feature that matches your patterns
 npx launchcrate scaffold "invoice management system"
 
-#    Analyzing feature specification...
-#    ✓ Feature: Invoice (8 fields)
-#    Generating code (reading your patterns)...
-#    ✓ Generated 7 files
+#   ✓ Feature: Invoice (8 fields)
+#   ✓ Generated 7 files
 #
-#    + src/app/api/invoices/route.ts
-#    + src/app/api/invoices/[id]/route.ts
-#    + src/app/dashboard/invoices/page.tsx
-#    + src/app/dashboard/invoices/[id]/page.tsx
-#    + src/app/dashboard/invoices/components/InvoiceForm.tsx
-#    + src/app/dashboard/invoices/components/InvoiceList.tsx
-#    + src/app/dashboard/invoices/types.ts
+#   + src/app/api/invoices/route.ts
+#   + src/app/api/invoices/[id]/route.ts
+#   + src/app/dashboard/invoices/page.tsx
+#   + src/app/dashboard/invoices/[id]/page.tsx
+#   + src/app/dashboard/invoices/components/InvoiceForm.tsx
+#   + src/app/dashboard/invoices/components/InvoiceList.tsx
+#   + src/app/dashboard/invoices/types.ts
 ```
 
-The generated code uses **your** ORM, **your** auth pattern, **your** component style, **your** import conventions. Not generic boilerplate — code that looks like you wrote it.
+## Why?
 
-## How It Works
+AI coding tools generate features fast — and break your auth, database, and billing even faster. You spend more time fixing AI output than you saved.
 
-1. **`launchcrate init`** scans your project and creates `.launchcrate.json`:
-   - Detects your stack (database, auth, styling)
-   - Finds existing route and page files as reference patterns
-   - Identifies safe zones (auth, database config, middleware) that should never be touched
+Launch Crate fixes this with three steps:
 
-2. **`launchcrate scaffold "description"`** generates a complete feature:
-   - Uses Claude to analyze your description into a structured spec (fields, types, relationships)
-   - Reads your existing code to learn your patterns
-   - Generates files that match your conventions exactly
-   - Only creates new files — never modifies existing ones
+1. **Audit** — find what AI already broke (security issues, injection risks, leaked secrets)
+2. **Guard** — generate rules so AI can't break it again (CLAUDE.md, .cursorrules)
+3. **Scaffold** — build new features safely (code that matches YOUR patterns, not generic templates)
+
+## Commands
+
+### `launchcrate audit`
+
+Scan your codebase for security issues and get a **Vibe Safety Score** (0-100).
+
+```bash
+npx launchcrate audit          # Terminal output with color
+npx launchcrate audit --json   # Machine-readable JSON
+```
+
+Checks for:
+- **Unprotected API routes** — endpoints missing auth checks
+- **SQL injection** — string concatenation in queries
+- **Hardcoded secrets** — API keys, tokens, passwords in source code
+- **Missing input validation** — request bodies used without validation
+- **Error leaks** — stack traces exposed to clients
+- **XSS risks** — dangerouslySetInnerHTML with user content
+
+Score breakdown with weighted categories:
+
+| Category | Weight | What it checks |
+|----------|--------|----------------|
+| Authentication | 30% | Auth on every API route |
+| Injection Safety | 25% | Parameterized queries, no XSS |
+| Secrets Management | 25% | No hardcoded credentials |
+| Input Validation | 10% | Zod/Yup/Joi on request bodies |
+| Error Handling | 10% | No stack traces in responses |
+
+Exits with code 1 if critical issues found — use in CI to block unsafe merges:
+
+```yaml
+# .github/workflows/audit.yml
+- run: npx launchcrate audit
+```
+
+### `launchcrate guard`
+
+Auto-generate AI safety rules from your project's actual architecture.
+
+```bash
+npx launchcrate guard              # Generate CLAUDE.md + .cursorrules
+npx launchcrate guard --format claude   # CLAUDE.md only
+npx launchcrate guard --format cursor   # .cursorrules only
+```
+
+Analyzes your project and generates rules covering:
+- **Safe zones** — files AI must never modify (auth, db, middleware)
+- **Database patterns** — how to query (your ORM, your import paths)
+- **Auth patterns** — how auth works (your wrappers, your session handling)
+- **Security rules** — no hardcoded secrets, parameterized queries only
+- **Code conventions** — import style, naming, error handling
+
+With `ANTHROPIC_API_KEY` set, rules are tailored to your specific codebase by reading your existing code. Without it, generates from a template based on detected stack.
+
+Commit the generated files so every AI coding session respects your architecture.
+
+### `launchcrate init`
+
+Detect your project structure and create `.launchcrate.json` config.
+
+```bash
+npx launchcrate init           # Interactive detection
+npx launchcrate init --force   # Overwrite existing config
+```
+
+Auto-detects:
+- Framework version and router type (App Router / Pages Router)
+- Database (Prisma, Drizzle, raw SQL, Supabase, Mongoose)
+- Auth (NextAuth, Clerk, Auth0, Supabase Auth)
+- Styling (Tailwind, CSS Modules, styled-components)
+- Reference files (existing routes and pages to learn patterns from)
+- Safe zones (files that should never be touched)
+
+### `launchcrate scaffold [name]`
+
+Generate a complete feature with API routes, pages, and components.
+
+```bash
+npx launchcrate scaffold                                    # Interactive
+npx launchcrate scaffold "customer tickets with SLA"        # With description
+npx launchcrate scaffold "blog posts" --dry-run             # Preview only
+npx launchcrate scaffold "notes" --no-ai                    # Basic templates
+```
+
+| Flag | Description |
+|------|-------------|
+| `-d, --description <desc>` | Feature description (skips prompt) |
+| `--no-ai` | Use basic templates instead of AI generation |
+| `--dry-run` | Preview files without writing them |
+
+Requires `ANTHROPIC_API_KEY` for AI-powered generation. Without it, generates functional but generic code.
+
+Generated code uses **your** ORM, **your** auth pattern, **your** component style, **your** import conventions. Not generic boilerplate — code that looks like you wrote it.
+
+#### What gets generated
+
+| File | Purpose |
+|------|---------|
+| `api/{feature}/route.ts` | List (GET) and create (POST) endpoints |
+| `api/{feature}/[id]/route.ts` | Get, update, delete endpoints |
+| `dashboard/{feature}/page.tsx` | List view with search, filter, sort |
+| `dashboard/{feature}/[id]/page.tsx` | Detail view with edit mode |
+| `dashboard/{feature}/components/Form.tsx` | Reusable create/edit form |
+| `dashboard/{feature}/components/List.tsx` | Table/list display component |
+| `dashboard/{feature}/types.ts` | TypeScript interfaces |
 
 ## Supported Stacks
 
@@ -62,66 +181,11 @@ Launch Crate works with any Next.js project. It auto-detects:
 | **Auth** | NextAuth/Auth.js, Clerk, Supabase Auth, Auth0 |
 | **Styling** | Tailwind CSS, CSS Modules, styled-components |
 
-## Installation
-
-```bash
-# Use directly with npx (no install needed)
-npx launchcrate init
-npx launchcrate scaffold "feature description"
-
-# Or install globally
-npm install -g launchcrate
-```
-
-## Setup
-
-### 1. Initialize your project
-
-```bash
-cd your-nextjs-project
-npx launchcrate init
-```
-
-This creates `.launchcrate.json` with your detected configuration. Review it and adjust safe zones if needed.
-
-### 2. Set your API key
-
-Launch Crate uses Claude for intelligent code generation. Set your API key:
-
-```bash
-# In your .env or .env.local
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-Without an API key, `scaffold` falls back to basic templates (functional but not pattern-matched).
-
-### 3. Scaffold features
-
-```bash
-# Interactive mode
-npx launchcrate scaffold
-
-# With inline description
-npx launchcrate scaffold "customer ticket system with priority, status, assignee, and SLA tracking"
-
-# Preview without writing files
-npx launchcrate scaffold "blog posts" --dry-run
-
-# Skip AI (use basic templates)
-npx launchcrate scaffold "notes" --no-ai
-```
-
 ## Safe Zones
 
 The core idea: **some files should never be generated or modified by AI.**
 
-When you run `init`, Launch Crate automatically identifies safe zones based on your stack:
-
-- **Auth files** — your authentication config, middleware, auth API routes
-- **Database config** — your ORM setup, connection files, schema definitions
-- **Core middleware** — Next.js middleware, layout files, config
-
-You can add custom safe zones in `.launchcrate.json`:
+`init` automatically identifies safe zones. `guard` writes them into CLAUDE.md. `scaffold` respects them when generating code. Customize in `.launchcrate.json`:
 
 ```json
 {
@@ -135,94 +199,35 @@ You can add custom safe zones in `.launchcrate.json`:
 }
 ```
 
-The scaffold command will never generate files that match these patterns.
+## Setup
 
-## Commands
+### API Key (optional but recommended)
 
-### `launchcrate init`
-
-Detect your project and create `.launchcrate.json`.
-
-| Flag | Description |
-|------|-------------|
-| `-f, --force` | Overwrite existing config without asking |
-
-### `launchcrate scaffold [name]`
-
-Generate a complete feature with API routes, pages, and components.
-
-| Flag | Description |
-|------|-------------|
-| `-d, --description <desc>` | Feature description (skips interactive prompt) |
-| `--no-ai` | Use basic templates instead of AI generation |
-| `--dry-run` | Preview files without writing them |
-
-## What Gets Generated
-
-For each feature, Launch Crate creates:
-
-| File | Purpose |
-|------|---------|
-| `api/{feature}/route.ts` | List (GET) and create (POST) endpoints |
-| `api/{feature}/[id]/route.ts` | Get, update, delete endpoints |
-| `dashboard/{feature}/page.tsx` | List view with search, filter, sort |
-| `dashboard/{feature}/[id]/page.tsx` | Detail view with edit mode |
-| `dashboard/{feature}/components/Form.tsx` | Reusable create/edit form |
-| `dashboard/{feature}/components/List.tsx` | Table/list display component |
-| `dashboard/{feature}/types.ts` | TypeScript interfaces |
-
-## Configuration
-
-`.launchcrate.json` reference:
-
-```json
-{
-  "version": "1.0",
-  "project": {
-    "name": "my-app",
-    "framework": "next",
-    "frameworkVersion": "14.2.0",
-    "router": "app",
-    "srcDir": true,
-    "language": "typescript"
-  },
-  "stack": {
-    "database": "prisma",
-    "auth": "next-auth",
-    "styling": "tailwind"
-  },
-  "paths": {
-    "root": ".",
-    "features": "src/app",
-    "components": "src/components",
-    "lib": "src/lib",
-    "api": "src/app/api"
-  },
-  "safeZones": [
-    "**/auth/**",
-    "**/lib/db.*",
-    "**/middleware.*"
-  ],
-  "referenceFiles": [
-    "src/app/api/projects/route.ts",
-    "src/app/dashboard/projects/page.tsx"
-  ]
-}
+```bash
+# In your .env or .env.local
+ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+Required for `scaffold` (AI code generation) and `guard` (project-specific rules). Without it, both commands fall back to templates.
+
+`audit` and `init` work without an API key.
 
 ## FAQ
 
 **Does this modify my existing files?**
-No. Launch Crate only creates new files. It reads existing files to learn your patterns but never writes to them.
+No. Launch Crate only creates new files. `guard` generates new CLAUDE.md/.cursorrules files (with confirmation if they exist). `scaffold` only creates new feature files. Nothing reads, modifies, or deletes your existing code.
 
-**What if I don't have an Anthropic API key?**
-The `scaffold` command falls back to basic templates. They're functional but won't match your specific code patterns.
+**Can I use this in CI?**
+Yes. `audit` exits with code 1 on critical findings and supports `--json` output. Use it as a CI gate to block unsafe merges.
 
 **Does it work with monorepos?**
-Run `init` and `scaffold` from the app directory (e.g., `apps/web`), not the monorepo root.
+Run commands from the app directory (e.g., `apps/web`), not the monorepo root.
+
+**What if I don't have an Anthropic API key?**
+`audit` and `init` work without one. `scaffold` falls back to basic templates. `guard` falls back to stack-based rules.
 
 **Can I customize the generated code?**
-Yes — it's your code. Edit it however you want after generation. The reference files in `.launchcrate.json` influence future generations, so the more consistent your codebase, the better the output.
+Yes — it's your code. The reference files in `.launchcrate.json` influence future generations, so the more consistent your codebase, the better the output.
 
 ## License
 
@@ -231,5 +236,5 @@ MIT
 ---
 
 <p align="center">
-  <sub>Built with Launch Crate? Test it with <a href="https://vibeproof.dev">VibeProof</a> — AI-powered QA for your app.</sub>
+  <sub>Built with Launch Crate? Test it with <a href="https://vibeproof.dev">VibeProof</a> — AI-powered QA for your vibe-coded app.</sub>
 </p>
