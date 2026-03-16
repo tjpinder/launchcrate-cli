@@ -1,0 +1,51 @@
+{
+  "name": "launchcrate",
+  "version": "0.1.0",
+  "description": "AI-powered feature scaffolding for Next.js. Vibe code safely.",
+  "type": "module",
+  "bin": {
+    "launchcrate": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "nextjs",
+    "scaffold",
+    "ai",
+    "cli",
+    "vibe-coding",
+    "saas",
+    "code-generation",
+    "developer-tools"
+  ],
+  "author": "Tom Pinder",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tjpinder/launchcrate-cli"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "fs-extra": "^11.2.0",
+    "ora": "^8.1.1",
+    "prompts": "^2.4.2",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.11.0",
+    "@types/prompts": "^2.4.9",
+    "typescript": "^5.3.3"
+  }
+}
