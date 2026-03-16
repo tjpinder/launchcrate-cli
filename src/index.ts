@@ -7,13 +7,14 @@ import { scaffoldCommand } from './commands/scaffold.js';
 import { auditCommand } from './commands/audit.js';
 import { guardCommand } from './commands/guard.js';
 import { testGapCommand } from './commands/test-gap.js';
+import { checkCommand } from './commands/check.js';
 
 const program = new Command();
 
 program
   .name('launchcrate')
   .description('AI-powered feature scaffolding for Next.js. Vibe code safely.')
-  .version('0.1.0');
+  .version('0.2.0');
 
 program
   .command('init')
@@ -62,6 +63,20 @@ program
   .action(async (options) => {
     try {
       await testGapCommand(options);
+    } catch (error) {
+      console.error(chalk.red(error instanceof Error ? error.message : String(error)));
+      process.exit(1);
+    }
+  });
+
+program
+  .command('check')
+  .description('Check changed files for security issues (pre-commit hook)')
+  .option('--staged', 'Only check git staged files')
+  .option('--install', 'Install as a git pre-commit hook')
+  .action(async (options) => {
+    try {
+      await checkCommand(options);
     } catch (error) {
       console.error(chalk.red(error instanceof Error ? error.message : String(error)));
       process.exit(1);
